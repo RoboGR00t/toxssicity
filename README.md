@@ -1,238 +1,379 @@
-![Peeping Tom — Offensive Security & Blind XSS Research](banner.png)
-<p align="center"> <strong> XSS WEAPONIZATION FRAMEWORK</strong> </p>
+# Toxssicity
+
+<p align="center"> <img src="docs/assets/images/toxssicity-banner.png" alt="Toxssicity Logo" width="100%"> </p>
+
+<h3 align="center">See beyond the injection.</h3>
+
+<p align="center"> <strong>An XSS Post-Exploitation Research Framework.</strong> </p>
+
+<p align="center"> A browser-side security research framework for investigating and demonstrating the real-world impact of Cross-Site Scripting vulnerabilities during authorized security assessments. </p>
+
+<p align="center"> <a href="https://github.com/RoboGR00t/toxssicity/stargazers"> <img src="https://img.shields.io/github/stars/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Stars"> </a> <a href="https://github.com/RoboGR00t/toxssicity/issues"> <img src="https://img.shields.io/github/issues/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Issues"> </a> <a href="https://github.com/RoboGR00t/toxssicity"> <img src="https://img.shields.io/github/last-commit/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="Last Commit"> </a> </p>
+
+<p align="center"> <a href="#overview">Overview</a> • <a href="#features">Features</a> • <a href="#screenshots">Screenshots</a> • <a href="#installation">Installation</a> • <a href="#usage">Usage</a> • <a href="#roadmap">Roadmap</a> </p>
+
+---
+
+## Demo
+
+<!-- Replace this placeholder with your actual demonstration GIF -->
+
+<p align="center"> <img src="docs/screenshots/toxssicity-demo.gif" alt="Toxssicity application demonstration" width="950"> </p>
+
+<p align="center"> <em>Toxssicity — Operator Dashboard Demonstration</em> </p>
 
 
 ---
 
-## 🕶️ Overview
+## Overview
 
-**Peeping Tom** is an XSS-focused security research framework designed to explore the post-exploitation implications of cross-site scripting vulnerabilities.
+Cross-Site Scripting (XSS) vulnerabilities are frequently demonstrated using simple JavaScript alerts or basic proof-of-concept payloads.
 
-Built with Node.js, SQLite, and Docker, the project provides a centralized web-based operator console for managing multiple browser test sessions and examining the potential impact of client-side JavaScript execution.
+While these demonstrate script execution, they often fail to communicate the broader impact that a browser-side vulnerability can have on an application and its users.
 
-Rather than treating XSS as a simple proof-of-concept alert, Peeping Tom explores the broader implications of browser-side execution in authorized penetration tests and controlled security laboratories.
+**Toxssicity was created to help bridge that gap.**
 
+Toxssicity is an XSS post-exploitation research framework designed for penetration testers, red teams, and security researchers. It provides a centralized operator interface for observing connected test sessions, inspecting browser-side application behavior, and validating the potential impact of XSS vulnerabilities in authorized testing environments.
 
-## ⚡ Features
+Instead of stopping at a basic proof of concept, Toxssicity provides a more interactive environment for investigating browser-side security findings.
 
-- **👁️ Operator Console** — A centralized web interface for managing the testing environment.
+### The idea
+
+**One research console. Multiple sessions. A clearer picture of XSS impact.**
+
+## Features
+
+### Browser Session Visualization
+
+Observe the browser-side application experience of connected test sessions through a centralized operator dashboard.
+
+- Browser session visualization.
     
-- **🔗 XSS Payload Generation** — Generate payloads for authorized security research.
+- Session selection and switching.
     
-- **👥 Multi-Session Management** — Organize and monitor multiple test sessions.
+- View the rendered application experience.
     
-- **🐳 Docker Deployment** — Containerized installation and operation.
-
+- Inspect browser-side activity during an assessment.
     
 
-_Feature availability depends on the current implementation. Review the source code to confirm the exact behavior of each component._
+### Multi-Session Management
 
-## 📽️ Preview 
-### Login page
-![loginscreen](images/loginscreen.png)
+Manage multiple connected test sessions from one interface.
 
-### Operators View 
-![features-operator](images/operator.png)
+- View available sessions.
+    
+- Switch between connected sessions.
+    
+- Inspect available browser and device information.
+    
+- Monitor connection status.
+    
+- Review connection history.
+    
 
-1. View connection history and session logs.
-2. Display a list of currently active sessions.
-3. View device information.
-4. Initiate remote session control.
-5. Access monitoring and activity logs.
-6. Execute JavaScript within the connected user's session.
-7. Load custom JavaScript modules and scripts within the connected user's sessio.
-8. Copy the generated payload.
-9. Toggle the remote session view to fullscreen.
-10. View the remote session screen.
-11. Configure the payload's IP address (Peeping Tom's IP).
+### Interactive Research Interface
 
-### Operators View with hooked sessions example
-![example-operator](images/example.png)
+Investigate browser-side behavior in controlled testing environments.
 
+- Request interactive control of an authorized test session.
+    
+- Interact with the available browser session view.
+    
+- Access the browser console interface.
+    
+- Load custom JavaScript research modules.
+    
 
-## 🏗️ Project Structure
+### Operator Dashboard
 
-```
-peeping-tom/
-├── data/
-├── private/
-│   └── operator.html
-├── public/
-│   ├── css/
-│   │   └── operator.css
-│   ├── js/
-│   │   └── operator.js
-│   ├── index.html
-│   └── logo.png
-├── docker-compose.yml
-├── Dockerfile
-├── package.json
-└── server.js
-```
+A centralized interface for managing and observing test sessions.
 
+- Active session list.
+    
+- Device information.
+    
+- System telemetry.
+    
+- Browser session viewer.
+    
+- Browser console interface.
+    
+- Connection history.
+    
+- Payload configuration interface.
+    
 
-## 🚀 Installation
+### Docker Deployment
+
+Toxssicity is packaged for containerized deployment.
+
+- Docker-based application deployment.
+    
+- Docker Compose support.
+    
+- Persistent application data.
+    
+- Simplified startup and management.
+    
+
+---
+
+## Screenshots
+
+<!-- Replace the image paths below with your actual screenshots -->
+
+### Operator Dashboard
+
+<p align="center"> <img src="docs/screenshots/dashboard.png" alt="Toxssicity Operator Dashboard" width="950"> </p>
+
+<em>The main operator interface.</em>
+
+### Active Sessions
+
+<p align="center"> <img src="docs/screenshots/sessions.png" alt="Toxssicity Active Sessions" width="950"> </p>
+
+<em>Connected test sessions and available session information.</em>
+
+### Browser Session View
+
+<p align="center"> <img src="docs/screenshots/browser-view.png" alt="Toxssicity Browser Session View" width="950"> </p>
+
+<em>Browser-side application visualization.</em>
+
+### Browser Console
+
+<p align="center"> <img src="docs/screenshots/console.png" alt="Toxssicity Browser Console" width="950"> </p>
+
+<em>Browser console interface.</em>
+
+### Connection History
+
+<p align="center"> <img src="docs/screenshots/history.png" alt="Toxssicity Connection History" width="950"> </p>
+
+<em>Historical connection information.</em>
+
+---
+
+## Technology Stack
+
+Toxssicity uses a web-based architecture with a containerized backend and a real-time operator interface.
+
+|Technology|Purpose|
+|---|---|
+|Node.js|Application runtime|
+|Express.js|Web application server|
+|Socket.IO|Real-time communication|
+|SQLite|Persistent application data|
+|Docker|Containerized deployment|
+|Docker Compose|Container management|
+|rrweb|Browser session recording/replay technology dependency|
+
+---
+
+## Installation
+
+Toxssicity is designed to run using Docker and Docker Compose.
 
 ### Requirements
 
+Make sure the following tools are installed:
+
+- Git
+    
 - Docker
     
 - Docker Compose
-    
-- Git
     
 
 ### 1. Clone the repository
 
 ```
-git clone https://github.com/RoboGR00t/Peeping-Tom-Support.git
-cd Peeping-Tom-Support
+git clone https://github.com/RoboGR00t/toxssicity.git
+cd toxssicity
 ```
 
-### 2. Build and start the application
+### 2. Build and start Toxssicity
 
 ```
 docker compose up -d --build
 ```
 
-This builds the Docker image and starts the application in the background.
-
-### 3. Verify the container
+### 4. Check the application logs
 
 ```
-docker ps
+docker compose logs -f
 ```
 
-Confirm that the Peeping Tom container is running.
+Review the logs for startup information and the initial administrator credentials generated by the application.
 
-### 4. View application logs in order to obtain the admin login password for the C2 Interface
+### 5. Access the application
 
-```
-docker compose logs -f 
-```
+Open the configured application address in your browser.
 
-To inspect logs from a specific container:
+The application currently uses port `8443` by default. 
 
-```
-docker logs -f peeping-tom-console
-```
+---
 
-The container name may differ depending on your Compose configuration.
+## Usage
 
-### 5. Access the web interface
+After successfully deploying Toxssicity:
 
-If the application is configured to publish port `3000`, open the following address:
-
-```
-http://127.0.0.1:3000
-```
-
-Complete the authentication and initialization process configured by the application.
-
-## ⚙️ Configuration
-
-Review the following files before deployment:
-
-- `docker-compose.yml` — Port mappings, services, and persistent volumes.
+1. Open the application in your browser.
     
-- `Dockerfile` — Container image and runtime configuration.
+2. Authenticate through the operator login page.
     
-- `package.json` — Dependencies and application scripts.
+3. Access the operator dashboard.
     
-- `server.js` — Server initialization, authentication, and application logic.
+4. Review the available connected test sessions.
+    
+5. Select an authorized test session.
+    
+6. Inspect its browser-side application view.
+    
+7. Review available device information and connection history.
+    
+8. Use the available research functionality within the scope of your assessment.
     
 
-### Recommended Deployment Practices
+The available functionality depends on the current application configuration and release.
 
-- Keep the operator console restricted to authorized users.
-    
-- Use HTTPS for appropriately secured remote deployments.
-    
+---
 
-## 🔬 Research Applications
+## Roadmap
 
-Peeping Tom is intended for authorized security research and controlled testing, including:
+Toxssicity is an evolving project. Future development will be guided by community feedback, feature requests, and project adoption.
 
-- Studying the impact of cross-site scripting vulnerabilities.
+The following ideas are under consideration and are **not part of the current release**.
+
+### Research and Session Management
+
+- Improved session recording and replay.
     
-- Evaluating intentionally vulnerable web applications.
-    
-- Demonstrating browser-side script execution risks.
-    
-- Testing defensive controls against XSS.
-    
-- Supporting authorized penetration-testing exercises.
-    
-- Improving developer awareness of client-side security boundaries.
+- Improved evidence collection.
     
 
-Use isolated lab environments, dedicated test accounts, and synthetic data.
+### Module Ecosystem
 
-## 🛡️ Security Considerations
-
-Cross-site scripting can allow injected JavaScript to execute in the context of a vulnerable website. Depending on the application and its protections, this may enable unauthorized actions or expose sensitive page content.
-
-Defensive measures include:
-
-- **Output encoding:** Encode untrusted content appropriately for its output context.
+- Expanded JavaScript research module library.
     
-- **Safe DOM manipulation:** Avoid unsafe HTML insertion and dangerous JavaScript sinks.
+- Module categorization and management.
     
-- **Content Security Policy:** Deploy a carefully configured CSP as an additional defense.
+- Module documentation and configuration interface.
     
-- **Secure cookies:** Use appropriate `HttpOnly`, `Secure`, and `SameSite` attributes.
-    
-- **Strong authorization:** Validate permissions on the server for sensitive operations.
-    
-- **Session management:** Implement expiration, revocation, and appropriate monitoring.
-    
-- **Security testing:** Regularly assess applications for reflected, stored, and DOM-based XSS.
+- Additional browser diagnostics.
     
 
-Remember that client-side controls alone cannot replace server-side authorization.
+### Future Assessment Capabilities
 
-## 🗺️ Roadmap
+- Social engineering awareness simulations.
+    
+- Phishing simulation scenarios.
+    
+- ClickFix awareness simulations.
+    
+- Expanded assessment reporting.
+    
 
-- [ ] Remove external dependencies
-- [x] Add scroll functionality to payload
-- [ ] Improve authentication and access controls
-- [x] Add persistence across the web app 
+> The roadmap is subject to change. Features will be prioritized according to project stability, community interest, and development capacity.
 
+---
 
-## 🤝 Contributing
+## Responsible Use
 
-Contributions that improve maintainability, reliability, documentation, and defensive security are welcome.
+Toxssicity is intended for authorized security research, penetration testing, and controlled security assessments.
+
+The capabilities provided by this project can have significant security and privacy implications.
+
+By using Toxssicity, you agree to:
+
+- Obtain explicit authorization before conducting any security assessment.
+    
+- Operate only against systems and environments within the agreed scope.
+    
+- Use controlled environments and test accounts whenever possible.
+    
+- Respect the privacy and rights of individuals.
+    
+- Avoid accessing, collecting, or disclosing information without authorization.
+    
+- Secure the application and its stored data against unauthorized access.
+    
+- Comply with all applicable laws, regulations, and engagement agreements.
+    
+
+**The user is solely responsible for how this software is deployed and used.**
+
+This project is provided for legitimate security research and educational purposes. The author does not authorize or endorse unauthorized access, surveillance, or malicious activity.
+
+---
+
+## Contributing
+
+Contributions and constructive feedback are welcome.
+
+If you would like to contribute:
 
 1. Fork the repository.
     
-2. Create a feature branch.
+2. Create a branch for your changes.
     
-3. Make your changes.
+3. Make your improvements.
     
-4. Test your changes in an authorized environment.
+4. Test your changes.
     
-5. Submit a pull request describing the changes.
+5. Submit a pull request describing your contribution.
+    
 
-## ⚖️ Disclaimer
+For bugs and feature suggestions, please use the GitHub Issues section.
 
-Peeping Tom is intended for educational purposes, authorized security research, and controlled penetration testing.
+Please do not include credentials, private keys, personal information, or sensitive target data in public issues or pull requests.
 
-Users are responsible for obtaining explicit authorization before testing systems or interacting with browser sessions. Unauthorized access, surveillance, data collection, or code execution may violate applicable laws, privacy rights, and contractual obligations.
+---
 
-This software is provided **as is**, without warranties of any kind. It has not been represented as independently audited or production-ready.
+## Support the Project
 
-The authors do not endorse unauthorized use of this project.
+If you find Toxssicity useful, consider supporting its development.
 
-## 📜 License
+- ⭐ Star the repository.
+    
+- 🐛 Report bugs.
+    
+- 💡 Suggest improvements.
+    
+- 🔧 Contribute code or documentation.
+    
+- 📢 Share the project with the security community.
+    
 
-Peeping Tom is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+Every star, contribution, and piece of feedback helps the project grow.
 
-You are free to use, study, modify, and redistribute this software under the terms of the license. Any redistribution of covered derivative works must comply with the applicable GPL-3.0 requirements.
+<p align="center"> <a href="https://github.com/RoboGR00t/toxssicity/stargazers"> <img src="https://img.shields.io/github/stars/RoboGR00t/toxssicity?style=social" alt="Star Toxssicity on GitHub"> </a> </p>
 
-## 👁️ Final Word
+---
+## 🙏 Credits & Inspiration
 
-**Peeping Tom — XSS Weaponization Framework**
+Toxssicity was heavily inspired by [**t3l3machus**](https://github.com/t3l3machus) and his project [**Toxssin**](https://github.com/t3l3machus/toxssin).
 
-_Understand the vulnerability. Demonstrate the impact. Strengthen the defense._
+Toxssin was the main inspiration behind the idea and direction of Toxssicity. This project builds on that initial inspiration with its own approach, features, and goals.
 
-<p align="center"> <sub>Built for authorized web-security research and controlled laboratory environments.</sub> </p>
+A big thank-you to **t3l3machus** for the original work and inspiration that helped make this project possible. Go check out Toxssin!
+
+---
+
+## License
+
+See the [`LICENSE`](LICENSE) file for the applicable license and terms of use.
+
+---
+
+<p align="center"> <img src="public/toxssicity-favicon.png" alt="Toxssicity" width="65"> </p>
+
+<h3 align="center">TOXSSICITY</h3>
+
+<p align="center"> <strong>See beyond the injection.</strong> </p>
+
+<p align="center"> Built for security research. Designed for impact. </p>
+
+<p align="center"> <a href="https://github.com/RoboGR00t/toxssicity">GitHub Repository</a> </p>
+
+
