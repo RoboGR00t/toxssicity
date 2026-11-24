@@ -1,7 +1,7 @@
 {
-  "name": "support-console",
+  "name": "toXSSicity",
   "version": "1.0.0",
-  "description": "Accessibility Co-Browsing Tool",
+  "description": "XSS Post Exploitation Framework",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

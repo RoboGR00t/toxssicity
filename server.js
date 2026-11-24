@@ -1,5 +1,6 @@
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const { Server } = require('socket.io');
 const session = require('express-session');
 const path = require('path');
@@ -12,7 +13,12 @@ const app = express();
 
 app.use(cors({ origin: '*', methods: ['GET', 'POST'], credentials: true }));
 
-const server = http.createServer(app);
+const sslOptions = {
+    key: fs.readFileSync('/usr/src/app/certs/server.key'),
+    cert: fs.readFileSync('/usr/src/app/certs/server.crt')
+};
+
+const server = https.createServer(sslOptions, app);
 
 const io = new Server(server, { 
     cors: { origin: '*', methods: ["GET", "POST"], credentials: true },
@@ -45,7 +51,7 @@ db.serialize(() => {
 
     db.get(`SELECT * FROM users WHERE username = 'admin'`, async (err, row) => {
         if (!row) {
-            const rawPassword = crypto.randomBytes(6).toString('hex');
+            const rawPassword = crypto.randomBytes(24).toString('hex');
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(rawPassword, salt);
             db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, ['admin', hash], (insertErr) => {
@@ -63,53 +69,182 @@ db.serialize(() => {
     });
 });
 
+const sessionSecret =
+    process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex');
+
+if (!process.env.SESSION_SECRET) {
+    console.warn('[AUTH] SESSION_SECRET is not configured. Sessions will reset after restart.');
+}
+
 app.use(session({
-    secret: crypto.randomBytes(32).toString('hex'),
+    name: 'toxssicity.sid',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, httpOnly: true }
+    rolling: true,
+    cookie: {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 8 * 60 * 60 * 1000
+    }
 }));
-app.use(express.urlencoded({ extended: true })); 
-app.use(express.json());
 
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
-        if (err || !user) return res.status(401).send('Invalid credentials. <a href="/">Try again</a>');
-        const match = await bcrypt.compare(password, user.password_hash);
-        if (match) {
-            req.session.isAuthenticated = true;
-            res.redirect('/operator');
-        } else { res.status(401).send('Invalid credentials. <a href="/">Try again</a>'); }
-    });
+app.use(express.urlencoded({ extended: false, limit: '10kb' }));
+app.use(express.json({ limit: '10kb' }));
+
+
+const publicDir = path.join(__dirname, 'public');
+const loginPage = path.join(publicDir, 'index.html');
+const notFoundPage = path.join(publicDir, '404.html');
+
+// Used to keep the password-check timing more consistent
+// when a username does not exist.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync(
+    crypto.randomBytes(32).toString('hex'),
+    10
+);
+
+// LOGIN PAGE
+// Authenticated users go straight to the operator page.
+app.get(['/', '/login', '/index.html'], (req, res) => {
+    if (req.session && req.session.isAuthenticated) {
+        return res.redirect('/operator');
+    }
+
+    res.sendFile(loginPage);
 });
 
+// LOGIN POST
+app.post('/login', (req, res) => {
+    const username =
+        typeof req.body.username === 'string'
+            ? req.body.username.trim()
+            : '';
+
+    const password =
+        typeof req.body.password === 'string'
+            ? req.body.password
+            : '';
+
+    if (!username || !password || username.length > 128 || password.length > 1024) {
+        return res.redirect(303, '/login?error=invalid');
+    }
+
+    db.get(
+        'SELECT * FROM users WHERE username = ?',
+        [username],
+        async (err, user) => {
+            if (err) {
+                console.error('[AUTH] Database error:', err.message);
+                return res.redirect(303, '/login?error=server');
+            }
+
+            try {
+                const hashToCheck = user
+                    ? user.password_hash
+                    : DUMMY_PASSWORD_HASH;
+
+                const passwordMatches = await bcrypt.compare(
+                    password,
+                    hashToCheck
+                );
+
+                if (!user || !passwordMatches) {
+                    return res.redirect(303, '/login?error=invalid');
+                }
+
+                // Regenerate the session after successful authentication.
+                req.session.regenerate((sessionErr) => {
+                    if (sessionErr) {
+                        console.error('[AUTH] Session error:', sessionErr);
+                        return res.redirect(303, '/login?error=server');
+                    }
+
+                    req.session.isAuthenticated = true;
+
+                    req.session.save((saveErr) => {
+                        if (saveErr) {
+                            console.error('[AUTH] Session save error:', saveErr);
+                            return res.redirect(303, '/login?error=server');
+                        }
+
+                        return res.redirect('/operator');
+                    });
+                });
+
+            } catch (error) {
+                console.error('[AUTH] Login error:', error);
+                return res.redirect(303, '/login?error=server');
+            }
+        }
+    );
+});
+
+// AUTHENTICATION MIDDLEWARE
 function requireAuth(req, res, next) {
     if (req.session && req.session.isAuthenticated) {
-        res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+        res.setHeader(
+            'Cache-Control',
+            'no-cache, private, no-store, must-revalidate'
+        );
         res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '-1');
+        res.setHeader('Expires', '0');
+
         return next();
     }
 
-    res.redirect('/');
+    return res.redirect('/login');
 }
 
+// LOGOUT
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            console.error('[SYS] Error destroying session:', err);
+            console.error('[AUTH] Error destroying session:', err);
             return res.status(500).send('Error logging out.');
         }
-        res.redirect('/');
+
+        res.clearCookie('toxssicity.sid', {
+            path: '/',
+            secure: true,
+            httpOnly: true,
+            sameSite: 'lax'
+        });
+
+        return res.redirect('/?logout=1');
     });
 });
 
+// PROTECTED OPERATOR PAGE
 app.get('/operator', requireAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'private', 'operator.html'));
+    res.sendFile(
+        path.join(__dirname, 'private', 'operator.html')
+    );
 });
 
-app.use(express.static('public'));
+// STATIC PUBLIC FILES
+app.use(express.static(publicDir));
+
+// CUSTOM 404 PAGE
+app.use((req, res) => {
+    res.status(404).sendFile(notFoundPage, (err) => {
+        if (err && !res.headersSent) {
+            res.status(404).send('404 - Page Not Found');
+        }
+    });
+});
+
+// GENERAL ERROR HANDLER
+app.use((err, req, res, next) => {
+    console.error('[HTTP] Unexpected error:', err);
+
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    res.status(500).send('Internal Server Error');
+});
 
 // --- MULTI-USER STREAM RELAY ---
 const activeClients = new Map();
@@ -183,5 +318,5 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = 3000;
+const PORT = 8443;
 server.listen(PORT, '0.0.0.0', () => console.log(`[SYS] Relay active at 0.0.0.0:${PORT}`));
