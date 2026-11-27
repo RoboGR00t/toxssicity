@@ -8,10 +8,33 @@
 
 <p align="center"> A browser-side security research framework for investigating and demonstrating the real-world impact of Cross-Site Scripting vulnerabilities during authorized security assessments. </p>
 
-<p align="center"> <a href="https://github.com/RoboGR00t/toxssicity/stargazers"> <img src="https://img.shields.io/github/stars/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Stars"> </a> <a href="https://github.com/RoboGR00t/toxssicity/issues"> <img src="https://img.shields.io/github/issues/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Issues"> </a> <a href="https://github.com/RoboGR00t/toxssicity"> <img src="https://img.shields.io/github/last-commit/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="Last Commit"> </a> </p>
+<p align="center"> <a href="https://github.com/RoboGR00t/toxssicity/stargazers"> <img src="https://img.shields.io/github/stars/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Stars"> </a> <a href="https://github.com/RoboGR00t/toxssicity/issues"> <img src="https://img.shields.io/github/issues/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="GitHub Issues"> </a> <a href="https://github.com/RoboGR00t/toxssicity"> <img src="https://img.shields.io/github/last-commit/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A" alt="Last Commit"> </a> 
+<a href="https://github.com/RoboGR00t/toxssicity/releases">
+  <img src="https://img.shields.io/github/v/release/RoboGR00t/toxssicity?style=for-the-badge&color=A3FF12&labelColor=090D0A&label=LATEST%20RELEASE" alt="Latest Release">
+</a>
+</p>
 
 <p align="center"> <a href="#overview">Overview</a> • <a href="#features">Features</a> • <a href="#screenshots">Screenshots</a> • <a href="#installation">Installation</a> • <a href="#usage">Usage</a> • <a href="#roadmap">Roadmap</a> </p>
 
+---
+
+## ⚡ Quick Start
+
+Get **Toxssicity** up and running with a single command.
+
+**Requirements:** Git, Docker Engine and Docker Compose.
+
+```bash
+git clone https://github.com/RoboGR00t/toxssicity.git && cd toxssicity && sudo docker compose up -d --build && sudo docker compose logs -f
+```
+
+Once the containers are running, access Toxssicity at:
+
+**https://localhost:8443**
+
+> **Note:** The installation command follows the container logs after startup. Press `Ctrl+C` to exit the log stream; the containers will continue running in the background.
+>
+> Only expose Toxssicity to trusted networks and use it in systems and browser sessions you own or have explicit permission to assess.
 ---
 
 ## Demo
